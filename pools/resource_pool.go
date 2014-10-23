@@ -38,11 +38,16 @@ type ResourcePool struct {
 	// stats
 	waitCount sync2.AtomicInt64
 	waitTime  sync2.AtomicDuration
+
+	//ext
+	name string // default: ""
+	maxage int  // seconds, 0 is no limit, default 0
 }
 
 type resourceWrapper struct {
 	resource Resource
 	timeUsed time.Time
+	ctime time.Time	// 创建时间
 }
 
 // NewResourcePool creates a new ResourcePool pool.
@@ -64,6 +69,16 @@ func NewResourcePool(factory Factory, capacity, maxCap int, idleTimeout time.Dur
 		rp.resources <- resourceWrapper{}
 	}
 	return rp
+}
+
+// SetName set name for ResourcePool
+func (rp *ResourcePool) SetName(name string) {
+	rp.name = name
+}
+
+// Name return the name of ResourcePool
+func (rp *ResourcePool) Name() string {
+	return rp.name
 }
 
 // Close empties the pool calling Close on all its resources.
@@ -131,10 +146,18 @@ func (rp *ResourcePool) get(wait bool, timeout time.Duration) (resource Resource
 		wrapper.resource.Close()
 		wrapper.resource = nil
 	}
+	// resource use too long time
+	if wrapper.resource != nil && rp.maxage > 0 && wrapper.ctime.Sub(time.Now()).Seconds() > float64(rp.maxage) {
+		wrapper.resource.Close()
+		wrapper.resource = nil
+	}
+
 	if wrapper.resource == nil {
 		wrapper.resource, err = rp.factory()
 		if err != nil {
 			rp.resources <- resourceWrapper{}
+		} else {
+			wrapper.ctime = time.Now()
 		}
 	}
 	return wrapper.resource, err
