@@ -47,7 +47,6 @@ type ResourcePool struct {
 type resourceWrapper struct {
 	resource Resource
 	timeUsed time.Time
-	ctime time.Time	// 创建时间
 }
 
 // NewResourcePool creates a new ResourcePool pool.
@@ -146,18 +145,10 @@ func (rp *ResourcePool) get(wait bool, timeout time.Duration) (resource Resource
 		wrapper.resource.Close()
 		wrapper.resource = nil
 	}
-	// resource use too long time
-	if wrapper.resource != nil && rp.maxage > 0 && wrapper.ctime.Sub(time.Now()).Seconds() > float64(rp.maxage) {
-		wrapper.resource.Close()
-		wrapper.resource = nil
-	}
-
 	if wrapper.resource == nil {
 		wrapper.resource, err = rp.factory()
 		if err != nil {
 			rp.resources <- resourceWrapper{}
-		} else {
-			wrapper.ctime = time.Now()
 		}
 	}
 	return wrapper.resource, err
