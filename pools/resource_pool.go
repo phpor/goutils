@@ -40,8 +40,8 @@ type ResourcePool struct {
 	waitTime  sync2.AtomicDuration
 
 	//ext
-	name string // default: ""
-	maxage int  // seconds, 0 is no limit, default 0
+	name   string // default: ""
+	maxage int    // seconds, 0 is no limit, default 0
 }
 
 type resourceWrapper struct {
