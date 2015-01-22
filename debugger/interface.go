@@ -10,11 +10,11 @@ const (
 )
 
 type Debugger interface {
-//	Debug(*Msg)
+	Debug(*Msg)
 	Info(*Msg)
-//	Notice(*Msg)
-//	Warn(*Msg)
-//	Error(*Msg)
+	Notice(*Msg)
+	Warn(*Msg)
+	Error(*Msg)
 
 	Enable()
 	Disable()

@@ -6,11 +6,11 @@ type base struct {
 	level  uint32
 }
 
-func (this *base) write(level uint32, msg *Msg, debugger Debugger, fn func(Debugger, *Msg)) {
+func (this *base) write(level uint32, fn func()) {
 	if !this.enable || this.level&level == 0 {
 		return
 	}
-	fn(debugger, msg)
+	fn()
 }
 
 func (this *base) Enable() {
