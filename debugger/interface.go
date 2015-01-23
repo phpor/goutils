@@ -18,7 +18,7 @@ type Debugger interface {
 
 	Enable()
 	Disable()
-	SetLevel(uint32)
+	SetLevel(int32)
 }
 
 type Messager interface {

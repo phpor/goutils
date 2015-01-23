@@ -15,4 +15,4 @@ func (this *Dummy) Error(msg Messager) {}
 
 func (this *Dummy) Enable() {}
 func (this *Dummy) Disable() {}
-func (this *Dummy) SetLevel(level uint32) {}
+func (this *Dummy) SetLevel(level int32) {}

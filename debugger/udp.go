@@ -14,7 +14,7 @@ func NewUdpDebugger(addr string) *UdpDebugger {
 		panic(err)
 	}
 	conn, err := net.DialUDP("udp", nil, udpAddress)
-	return &UdpDebugger{conn: conn, debuggerBase: debuggerBase{enable: false, level: uint32(0)}}
+	return &UdpDebugger{conn: conn, debuggerBase: debuggerBase{enable: false, level: 0}}
 }
 
 
@@ -34,7 +34,7 @@ func (this *UdpDebugger) Error(msg Messager) {
 	this.write(ERROR, msg)
 }
 
-func (this *UdpDebugger) write(level uint32, msg Messager) {
+func (this *UdpDebugger) write(level int32, msg Messager) {
 	this.debuggerBase.write(level, func() bool{
 			_, err := this.conn.Write([]byte(msg.String()))
 			if err != nil {
