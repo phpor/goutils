@@ -10,13 +10,17 @@ const (
 )
 
 type Debugger interface {
-	Debug(*Msg)
-	Info(*Msg)
-	Notice(*Msg)
-	Warn(*Msg)
-	Error(*Msg)
+	Debug(Messager)
+	Info(Messager)
+	Notice(Messager)
+	Warn(Messager)
+	Error(Messager)
 
 	Enable()
 	Disable()
 	SetLevel(uint32)
+}
+
+type Messager interface {
+	String() string
 }

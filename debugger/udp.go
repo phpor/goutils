@@ -5,7 +5,7 @@ import "net"
 
 type UdpDebugger struct {
 	conn *net.UDPConn
-	base
+	debuggerBase
 }
 
 func NewUdpDebugger(addr string) *UdpDebugger {
@@ -14,28 +14,28 @@ func NewUdpDebugger(addr string) *UdpDebugger {
 		panic(err)
 	}
 	conn, err := net.DialUDP("udp", nil, udpAddress)
-	return &UdpDebugger{conn: conn, base: base{false, uint32(0)}}
+	return &UdpDebugger{conn: conn, debuggerBase: debuggerBase{false, uint32(0)}}
 }
 
-func (this *UdpDebugger) Debug(msg *Msg) {
+func (this *UdpDebugger) Debug(msg Messager) {
 	this.write(DEBUG, msg)
 }
 
-func (this *UdpDebugger) Info(msg *Msg) {
+func (this *UdpDebugger) Info(msg Messager) {
 	this.write(INFO, msg)
 }
-func (this *UdpDebugger) Notice(msg *Msg) {
+func (this *UdpDebugger) Notice(msg Messager) {
 	this.write(NOTICE, msg)
 }
-func (this *UdpDebugger) Warn(msg *Msg) {
+func (this *UdpDebugger) Warn(msg Messager) {
 	this.write(WARN, msg)
 }
-func (this *UdpDebugger) Error(msg *Msg) {
+func (this *UdpDebugger) Error(msg Messager) {
 	this.write(ERROR, msg)
 }
 
-func (this *UdpDebugger) write(level uint32, msg *Msg) {
+func (this *UdpDebugger) write(level uint32, msg Messager) {
 	this.base.write(level, func() {
-			this.conn.Write(msg.Bytes())
-		})
+		this.conn.Write([]byte(msg.String()))
+	})
 }

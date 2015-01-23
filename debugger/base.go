@@ -1,26 +1,26 @@
 package debugger
 
 // 设置调试级别
-type base struct {
+type debuggerBase struct {
 	enable bool
 	level  uint32
 }
 
-func (this *base) write(level uint32, fn func()) {
+func (this *debuggerBase) write(level uint32, fn func()) {
 	if !this.enable || this.level&level == 0 {
 		return
 	}
 	fn()
 }
 
-func (this *base) Enable() {
+func (this *debuggerBase) Enable() {
 	this.enable = true
 }
 
-func (this *base) Disable() {
+func (this *debuggerBase) Disable() {
 	this.enable = false
 }
 
-func (this *base) SetLevel(level uint32) {
+func (this *debuggerBase) SetLevel(level uint32) {
 	this.level |= level
 }
