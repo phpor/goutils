@@ -14,13 +14,13 @@ func NewUdpDebugger(addr string) *UdpDebugger {
 		panic(err)
 	}
 	conn, err := net.DialUDP("udp", nil, udpAddress)
-	return &UdpDebugger{conn: conn, debuggerBase: debuggerBase{false, uint32(0)}}
+	return &UdpDebugger{conn: conn, debuggerBase: debuggerBase{enable: false, level: uint32(0)}}
 }
+
 
 func (this *UdpDebugger) Debug(msg Messager) {
 	this.write(DEBUG, msg)
 }
-
 func (this *UdpDebugger) Info(msg Messager) {
 	this.write(INFO, msg)
 }
@@ -35,7 +35,11 @@ func (this *UdpDebugger) Error(msg Messager) {
 }
 
 func (this *UdpDebugger) write(level uint32, msg Messager) {
-	this.base.write(level, func() {
-		this.conn.Write([]byte(msg.String()))
-	})
+	this.debuggerBase.write(level, func() bool{
+			_, err := this.conn.Write([]byte(msg.String()))
+			if err != nil {
+				return false
+			}
+			return true
+		})
 }

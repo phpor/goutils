@@ -6,11 +6,11 @@ type debuggerBase struct {
 	level  uint32
 }
 
-func (this *debuggerBase) write(level uint32, fn func()) {
+func (this *debuggerBase) write(level uint32, fn func() bool) bool{
 	if !this.enable || this.level&level == 0 {
-		return
+		return false
 	}
-	fn()
+	return fn()
 }
 
 func (this *debuggerBase) Enable() {
