@@ -4,6 +4,9 @@ package debugger
 type Dummy struct {
 }
 
+func NewDummyDebugger() *Dummy{
+	return &Dummy{}
+}
 func (this *Dummy) Debug(msg Messager) {}
 func (this *Dummy) Info(msg Messager) {}
 func (this *Dummy) Notice(msg Messager) {}
