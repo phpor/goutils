@@ -1,7 +1,10 @@
 // debugger 的UDP实现
 package debugger
 
-import "net"
+import (
+	"net"
+	"bytes"
+)
 
 type UdpDebugger struct {
 	conn *net.UDPConn
@@ -14,7 +17,7 @@ func NewUdpDebugger(addr string) *UdpDebugger {
 		panic(err)
 	}
 	conn, err := net.DialUDP("udp", nil, udpAddress)
-	return &UdpDebugger{conn: conn, debuggerBase: debuggerBase{enable: false, level: 0}}
+	return &UdpDebugger{conn: conn, debuggerBase: debuggerBase{enable: false, level: loglevel(0)}}
 }
 
 
@@ -34,9 +37,13 @@ func (this *UdpDebugger) Error(msg Messager) {
 	this.write(ERROR, msg)
 }
 
-func (this *UdpDebugger) write(level int32, msg Messager) {
+func (this *UdpDebugger) write(level loglevel, msg Messager) {
 	this.debuggerBase.write(level, func() bool{
-			_, err := this.conn.Write([]byte(msg.String()))
+			var buf bytes.Buffer
+			buf.WriteString(level.String())
+			buf.WriteString(" ")
+			buf.WriteString(msg.String())
+			_, err := this.conn.Write(buf.Bytes())
 			if err != nil {
 				return false
 			}
